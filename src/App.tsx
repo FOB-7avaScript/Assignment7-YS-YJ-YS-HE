@@ -1,11 +1,19 @@
-import React from 'react';
+import { Global } from '@emotion/react';
+
+import AppLayout from 'Components/AppLayout';
 import Delete from 'Pages/Delete/Delete';
+
+import Reset from 'Styles/Reset';
 
 function App() {
   return (
-    <div>
-      <Delete />
-    </div>
+    <>
+      <Global styles={Reset} />
+      <AppLayout>
+        투두 리스트 영역
+        <Delete />
+      </AppLayout>
+    </>
   );
 }
 
