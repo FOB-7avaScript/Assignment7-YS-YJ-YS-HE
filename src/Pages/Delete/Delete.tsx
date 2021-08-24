@@ -41,11 +41,11 @@ export default function Delete() {
 
   return (
     <div>
-      {todoItems.map((item) => (
-        <div key={item.id}>
-          <div>{item.id}</div>
-          <div>{item.taskName}</div>
-          <input type="button" onClick={() => handleDeleteClick(item.id)} />
+      {todoItems.map(({ id, taskName }) => (
+        <div key={id}>
+          <div>{id}</div>
+          <div>{taskName}</div>
+          <input type="button" onClick={() => handleDeleteClick(id)} />
         </div>
       ))}
     </div>
