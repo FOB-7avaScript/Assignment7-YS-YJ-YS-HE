@@ -23,7 +23,7 @@ export default function Delete() {
       .then((res) => res.json())
       .then((data) => saveDataToLocalStorage('data', data));
 
-    const data = JSON.parse(getDataFromLocalStorage('data'));
+    const data = getDataFromLocalStorage('data');
     setTodoItems(data);
   }, []);
 
