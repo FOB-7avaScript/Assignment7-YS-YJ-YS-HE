@@ -1,7 +1,8 @@
-import DragNDrop from 'Components/DragNDrop';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { DragProvider } from 'store/drag';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
+import DragNDrop from 'Components/DragNDrop';
 import './Delete.css';
 
 export type Itodo = {
@@ -19,8 +20,6 @@ const initialTodos: Itodo[] = [];
 
 export default function Delete() {
   const [todoItems, setTodoItems] = useState(initialTodos);
-  const [dragging, setDragging] = useState(false);
-  const dragItem = useRef<number>();
 
   useEffect((): void => {
     fetch('/Data/Data.json')
@@ -43,44 +42,32 @@ export default function Delete() {
     saveData();
   }, [saveData]);
 
-  /* ---- Drag & Drop --- */
-  const toggleDragging = () => {
-    setDragging((prev) => !prev);
-  };
-
-  const handleDragItem = (dragIndex: number) => {
-    dragItem.current = dragIndex;
-  };
-
   const handleTodoItems = (dropIndex: number, dragIndex: number) => {
     setTodoItems((prevTodoItems) => {
       const newTodoItems = [...prevTodoItems];
       const [currentItem] = newTodoItems.splice(dragIndex, 1);
       newTodoItems.splice(dropIndex, 0, currentItem);
-      dragItem.current = dropIndex;
       return newTodoItems;
     });
   };
 
   return (
-    <ul style={{ padding: '40px' }}>
-      {todoItems.map(({ id, taskName }, index) => (
-        <DragNDrop
-          key={id}
-          itemIndex={index}
-          dragging={dragging}
-          toggleDragging={toggleDragging}
-          dragItemIndex={dragItem.current!}
-          handleDragItem={handleDragItem}
-          handleTodoItems={handleTodoItems}
-        >
-          <li className="todo-item">
-            <div>{id}</div>
-            <div>{taskName}</div>
-            <input type="button" onClick={() => handleDeleteClick(id)} />
-          </li>
-        </DragNDrop>
-      ))}
-    </ul>
+    <DragProvider>
+      <ul style={{ padding: '40px' }}>
+        {todoItems.map(({ id, taskName }, index) => (
+          <DragNDrop
+            key={id}
+            itemIndex={index}
+            handleTodoItems={handleTodoItems}
+          >
+            <li className="todo-item">
+              <div>{id}</div>
+              <div>{taskName}</div>
+              <input type="button" onClick={() => handleDeleteClick(id)} />
+            </li>
+          </DragNDrop>
+        ))}
+      </ul>
+    </DragProvider>
   );
 }

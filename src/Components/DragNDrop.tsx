@@ -1,40 +1,37 @@
-import React, { DragEvent, useRef } from 'react';
+import React, { DragEvent, useContext } from 'react';
+import DragContext from 'store/drag';
 import './DragNDrop.css';
 
 interface DragNDropProps {
   itemIndex: number;
-  dragging: boolean;
-  toggleDragging(): void;
-  dragItemIndex: number;
-  handleDragItem(dragIndex?: number): void;
   handleTodoItems(dropIndex: number, dragIndex: number): void;
   children: React.ReactNode;
 }
 
 const DragNDrop: React.FC<DragNDropProps> = ({
   itemIndex,
-  dragging,
-  toggleDragging,
-  dragItemIndex,
-  handleDragItem,
   handleTodoItems,
   children
 }) => {
+  const {
+    state: { dragging, dragItemIndex },
+    actions: { setDragging, handleDragItemIndex }
+  } = useContext(DragContext);
   let dragNode: EventTarget | null = null;
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, dragIndex: number) => {
-    handleDragItem(dragIndex);
+    handleDragItemIndex(dragIndex);
     dragNode = e.target;
 
     setTimeout(() => {
-      toggleDragging();
+      setDragging(true);
     }, 0);
   };
 
   const handleDragEnd = () => {
-    handleDragItem();
+    handleDragItemIndex(null);
     dragNode = null;
-    toggleDragging();
+    setDragging(false);
   };
 
   const handleDragEnter = (e: DragEvent<HTMLDivElement>, dropIndex: number) => {
@@ -42,7 +39,8 @@ const DragNDrop: React.FC<DragNDropProps> = ({
       return;
     }
 
-    if (e.target !== dragNode) {
+    if (e.target !== dragNode && dragItemIndex !== null) {
+      handleDragItemIndex(dropIndex);
       handleTodoItems(dropIndex, dragItemIndex);
     }
   };
