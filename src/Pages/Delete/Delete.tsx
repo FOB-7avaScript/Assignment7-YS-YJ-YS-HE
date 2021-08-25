@@ -43,28 +43,19 @@ export default function Delete() {
     saveData();
   }, [saveData]);
 
-  const findTodoItems = (id: number): number =>
-    todoItems.findIndex((todoItem) => todoItem.id === id);
-
-  const handleTodoItems = (targetId: number, currentId: number) => {
+  /* ---- Drag & Drop --- */
+  const handleTodoItems = (dropIndex: number, dragIndex: number) => {
     setTodoItems((prevTodoItems) => {
-      const targetIndex = findTodoItems(targetId);
-      const currentIndex = findTodoItems(currentId);
-
       const newTodoItems = [...prevTodoItems];
-      newTodoItems.splice(
-        targetIndex,
-        0,
-        newTodoItems.splice(currentIndex, 1)[0]
-      );
-
+      const [currentItem] = newTodoItems.splice(dragIndex, 1);
+      newTodoItems.splice(dropIndex, 0, currentItem);
+      dragItem.current = dropIndex;
       return newTodoItems;
     });
   };
 
-  /* ---- Drag & Drop --- */
-  const handleDragStart = (e: DragEvent<HTMLDivElement>, id: number) => {
-    dragItem.current = id;
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, dragIndex: number) => {
+    dragItem.current = dragIndex;
     dragNode.current = e.target;
 
     setTimeout(() => {
@@ -78,20 +69,21 @@ export default function Delete() {
     setDragging(false);
   };
 
-  const handleDragEnter = (e: DragEvent<HTMLDivElement>, targetId: number) => {
+  const handleDragEnter = (e: DragEvent<HTMLDivElement>, dropIndex: number) => {
     if (!dragging) {
       return;
     }
-    const currentId = dragItem.current!;
+    const dragIndex = dragItem.current!;
     if (e.target !== dragNode.current) {
-      handleTodoItems(targetId, currentId);
+      console.log(dropIndex, dragIndex);
+      handleTodoItems(dropIndex, dragIndex);
     }
   };
 
-  const getDragItemStyle = (id: number): string | undefined => {
+  const getDragItemStyle = (currentIndex: number): string | undefined => {
     if (dragging) {
-      const currentId = dragItem.current!;
-      if (currentId === id) {
+      const dragIndex = dragItem.current!;
+      if (dragIndex === currentIndex) {
         return 'drag-item';
       }
     }
@@ -100,14 +92,14 @@ export default function Delete() {
 
   return (
     <ul style={{ padding: '40px' }}>
-      {todoItems.map(({ id, taskName }) => (
+      {todoItems.map(({ id, taskName }, index) => (
         <div
           key={id}
           draggable
-          onDragStart={(e) => handleDragStart(e, id)}
+          onDragStart={(e) => handleDragStart(e, index)}
           onDragEnd={handleDragEnd}
-          onDragEnter={(e) => handleDragEnter(e, id)}
-          className={getDragItemStyle(id)}
+          onDragEnter={(e) => handleDragEnter(e, index)}
+          className={getDragItemStyle(index)}
         >
           <li className="todo-item">
             <div>{id}</div>
