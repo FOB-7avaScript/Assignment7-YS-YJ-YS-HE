@@ -20,11 +20,11 @@ const DragNDrop: React.FC<DragNDropProps> = ({
   handleTodoItems,
   children
 }) => {
-  const dragNode = useRef<EventTarget>();
+  let dragNode: EventTarget | null = null;
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, dragIndex: number) => {
     handleDragItem(dragIndex);
-    dragNode.current = e.target;
+    dragNode = e.target;
 
     setTimeout(() => {
       toggleDragging();
@@ -33,7 +33,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({
 
   const handleDragEnd = () => {
     handleDragItem();
-    dragNode.current = undefined;
+    dragNode = null;
     toggleDragging();
   };
 
@@ -42,7 +42,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({
       return;
     }
 
-    if (e.target !== dragNode.current) {
+    if (e.target !== dragNode) {
       handleTodoItems(dropIndex, dragItemIndex);
     }
   };
