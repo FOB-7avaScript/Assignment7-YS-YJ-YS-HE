@@ -35,7 +35,7 @@ interface UserProviderProps {
 }
 
 const DragProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [dragging, setDragging] = useState(false);
+  const [dragging, setDragging] = useState<boolean>(false);
   const dragItem = useRef<number | null>(null);
 
   const updateDragItemIndex = (index: number | null) => {
