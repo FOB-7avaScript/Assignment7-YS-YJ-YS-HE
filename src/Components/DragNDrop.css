@@ -1,0 +1,9 @@
+.drag-item {
+  margin-bottom: 15px;
+  border: 2px dashed #0099fd;
+}
+
+.drag-item * {
+  opacity: 0;
+  pointer-events: none;
+}

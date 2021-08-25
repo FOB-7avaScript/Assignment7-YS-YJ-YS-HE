@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback, DragEvent, useRef } from 'react';
+import DragNDrop from 'Components/DragNDrop';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
 import './Delete.css';
@@ -20,7 +21,6 @@ export default function Delete() {
   const [todoItems, setTodoItems] = useState(initialTodos);
   const [dragging, setDragging] = useState(false);
   const dragItem = useRef<number>();
-  const dragNode = useRef<EventTarget>();
 
   useEffect((): void => {
     fetch('/Data/Data.json')
@@ -44,6 +44,14 @@ export default function Delete() {
   }, [saveData]);
 
   /* ---- Drag & Drop --- */
+  const toggleDragging = () => {
+    setDragging((prev) => !prev);
+  };
+
+  const handleDragItem = (dragIndex: number | undefined) => {
+    dragItem.current = dragIndex;
+  };
+
   const handleTodoItems = (dropIndex: number, dragIndex: number) => {
     setTodoItems((prevTodoItems) => {
       const newTodoItems = [...prevTodoItems];
@@ -54,59 +62,24 @@ export default function Delete() {
     });
   };
 
-  const handleDragStart = (e: DragEvent<HTMLDivElement>, dragIndex: number) => {
-    dragItem.current = dragIndex;
-    dragNode.current = e.target;
-
-    setTimeout(() => {
-      setDragging(true);
-    }, 0);
-  };
-
-  const handleDragEnd = () => {
-    dragItem.current = undefined;
-    dragNode.current = undefined;
-    setDragging(false);
-  };
-
-  const handleDragEnter = (e: DragEvent<HTMLDivElement>, dropIndex: number) => {
-    if (!dragging) {
-      return;
-    }
-    const dragIndex = dragItem.current!;
-    if (e.target !== dragNode.current) {
-      console.log(dropIndex, dragIndex);
-      handleTodoItems(dropIndex, dragIndex);
-    }
-  };
-
-  const getDragItemStyle = (currentIndex: number): string | undefined => {
-    if (dragging) {
-      const dragIndex = dragItem.current!;
-      if (dragIndex === currentIndex) {
-        return 'drag-item';
-      }
-    }
-    return undefined;
-  };
-
   return (
     <ul style={{ padding: '40px' }}>
       {todoItems.map(({ id, taskName }, index) => (
-        <div
+        <DragNDrop
           key={id}
-          draggable
-          onDragStart={(e) => handleDragStart(e, index)}
-          onDragEnd={handleDragEnd}
-          onDragEnter={(e) => handleDragEnter(e, index)}
-          className={getDragItemStyle(index)}
+          itemIndex={index}
+          dragging={dragging}
+          toggleDragging={toggleDragging}
+          dragItemIndex={dragItem.current!}
+          handleDragItem={handleDragItem}
+          handleTodoItems={handleTodoItems}
         >
           <li className="todo-item">
             <div>{id}</div>
             <div>{taskName}</div>
             <input type="button" onClick={() => handleDeleteClick(id)} />
           </li>
-        </div>
+        </DragNDrop>
       ))}
     </ul>
   );
