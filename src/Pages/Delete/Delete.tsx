@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
+import styled from '@emotion/styled';
 import { DragProvider } from 'store/drag';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
 import DragNDrop from 'Components/DragNDrop';
-import './Delete.css';
 
 export type Itodo = {
   id: number;
@@ -53,21 +53,37 @@ export default function Delete() {
 
   return (
     <DragProvider>
-      <ul style={{ padding: '40px' }}>
+      <TodoList>
         {todoItems.map(({ id, taskName }, index) => (
           <DragNDrop
             key={id}
             itemIndex={index}
             handleTodoItems={handleTodoItems}
           >
-            <li className="todo-item">
+            <TodoItem>
               <div>{id}</div>
               <div>{taskName}</div>
               <input type="button" onClick={() => handleDeleteClick(id)} />
-            </li>
+            </TodoItem>
           </DragNDrop>
         ))}
-      </ul>
+      </TodoList>
     </DragProvider>
   );
 }
+
+const TodoList = styled.ul`
+  padding: 20px;
+`;
+
+const TodoItem = styled.li`
+  background-color: white;
+  margin: 15px 0;
+  list-style: none;
+  &:first-of-type {
+    margin-top: 0;
+  }
+  & li:last-of-type {
+    margin-bottom: 0;
+  }
+`;

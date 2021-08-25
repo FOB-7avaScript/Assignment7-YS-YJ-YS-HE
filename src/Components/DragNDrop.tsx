@@ -1,6 +1,6 @@
 import React, { DragEvent, useContext } from 'react';
+import styled from '@emotion/styled';
 import DragContext from 'store/drag';
-import './DragNDrop.css';
 
 interface DragNDropProps {
   itemIndex: number;
@@ -45,26 +45,38 @@ const DragNDrop: React.FC<DragNDropProps> = ({
     }
   };
 
-  const getDragItemStyle = (currentIndex: number): string | undefined => {
-    if (dragging) {
-      if (dragItemIndex === currentIndex) {
-        return 'drag-item';
-      }
+  const getDragItemStyle = (currentIndex: number): boolean => {
+    if (dragItemIndex === currentIndex) {
+      return true;
     }
-    return undefined;
+    return false;
   };
 
   return (
-    <div
+    <DragItem
       draggable
       onDragStart={(e) => handleDragStart(e, itemIndex)}
       onDragEnd={handleDragEnd}
       onDragEnter={(e) => handleDragEnter(e, itemIndex)}
-      className={getDragItemStyle(itemIndex)}
+      dragging={dragging && getDragItemStyle(itemIndex)}
     >
       {children}
-    </div>
+    </DragItem>
   );
 };
 
 export default DragNDrop;
+
+const DragItem = styled.div<{ dragging: boolean }>`
+  ${({ dragging }) =>
+    dragging &&
+    `
+    margin-bottom: 15px;
+    border: 2px dashed #0099fd;
+    & > * {
+      opacity: 0;
+      pointer-events: none;
+      margin: 0;
+    }
+  `}
+`;
