@@ -13,7 +13,7 @@ interface IDragContext {
   };
   actions: {
     setDragging: Dispatch<SetStateAction<boolean>>;
-    handleDragItemIndex: (index: number | null) => void;
+    updateDragItemIndex: (index: number | null) => void;
   };
 }
 
@@ -24,11 +24,11 @@ const defaultValue: IDragContext = {
   },
   actions: {
     setDragging: () => {},
-    handleDragItemIndex: () => {}
+    updateDragItemIndex: () => {}
   }
 };
 
-const DragContext = createContext(defaultValue);
+const DragContext = createContext<IDragContext>(defaultValue);
 
 interface UserProviderProps {
   children: React.ReactNode;
@@ -38,14 +38,15 @@ const DragProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [dragging, setDragging] = useState(false);
   const dragItem = useRef<number | null>(null);
 
-  const handleDragItemIndex = (index: number | null) => {
+  const updateDragItemIndex = (index: number | null) => {
     dragItem.current = index;
   };
 
   const value: IDragContext = {
     state: { dragging, dragItemIndex: dragItem.current },
-    actions: { setDragging, handleDragItemIndex }
+    actions: { setDragging, updateDragItemIndex }
   };
+
   return <DragContext.Provider value={value}>{children}</DragContext.Provider>;
 };
 

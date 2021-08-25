@@ -42,23 +42,19 @@ export default function Delete() {
     saveData();
   }, [saveData]);
 
-  const handleTodoItems = (dropIndex: number, dragIndex: number) => {
-    setTodoItems((prevTodoItems) => {
-      const newTodoItems = [...prevTodoItems];
-      const [currentItem] = newTodoItems.splice(dragIndex, 1);
-      newTodoItems.splice(dropIndex, 0, currentItem);
-      return newTodoItems;
-    });
+  const handleTodoItems = (newTodoItems: Itodo[]) => {
+    setTodoItems(newTodoItems);
   };
 
   return (
     <DragProvider>
       <TodoList>
-        {todoItems.map(({ id, taskName }, index) => (
+        {todoItems.map(({ id, taskName }, index, array) => (
           <DragNDrop
             key={id}
+            itemArray={array}
             itemIndex={index}
-            handleTodoItems={handleTodoItems}
+            updateItemArray={handleTodoItems}
           >
             <TodoItem>
               <div>{id}</div>

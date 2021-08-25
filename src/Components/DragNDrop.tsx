@@ -1,26 +1,29 @@
 import React, { DragEvent, useContext } from 'react';
 import styled from '@emotion/styled';
 import DragContext from 'store/drag';
+import { Itodo } from 'Pages/Delete/Delete';
 
 interface DragNDropProps {
+  itemArray: Itodo[];
   itemIndex: number;
-  handleTodoItems(dropIndex: number, dragIndex: number): void;
+  updateItemArray(newTodoItems: Itodo[]): void;
   children: React.ReactNode;
 }
 
 const DragNDrop: React.FC<DragNDropProps> = ({
+  itemArray,
   itemIndex,
-  handleTodoItems,
+  updateItemArray,
   children
 }) => {
   const {
     state: { dragging, dragItemIndex },
-    actions: { setDragging, handleDragItemIndex }
+    actions: { setDragging, updateDragItemIndex }
   } = useContext(DragContext);
   let dragNode: EventTarget | null = null;
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, dragIndex: number) => {
-    handleDragItemIndex(dragIndex);
+    updateDragItemIndex(dragIndex);
     dragNode = e.target;
 
     setTimeout(() => {
@@ -29,7 +32,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({
   };
 
   const handleDragEnd = () => {
-    handleDragItemIndex(null);
+    updateDragItemIndex(null);
     dragNode = null;
     setDragging(false);
   };
@@ -40,12 +43,16 @@ const DragNDrop: React.FC<DragNDropProps> = ({
     }
 
     if (e.target !== dragNode && dragItemIndex !== null) {
-      handleDragItemIndex(dropIndex);
-      handleTodoItems(dropIndex, dragItemIndex);
+      updateDragItemIndex(dropIndex);
+
+      const newItemArray = [...itemArray];
+      const [dragItem] = newItemArray.splice(dragItemIndex, 1);
+      newItemArray.splice(dropIndex, 0, dragItem);
+      updateItemArray(newItemArray);
     }
   };
 
-  const getDragItemStyle = (currentIndex: number): boolean => {
+  const isDraggingItem = (currentIndex: number): boolean => {
     if (dragItemIndex === currentIndex) {
       return true;
     }
@@ -58,7 +65,7 @@ const DragNDrop: React.FC<DragNDropProps> = ({
       onDragStart={(e) => handleDragStart(e, itemIndex)}
       onDragEnd={handleDragEnd}
       onDragEnter={(e) => handleDragEnter(e, itemIndex)}
-      dragging={dragging && getDragItemStyle(itemIndex)}
+      dragging={dragging && isDraggingItem(itemIndex)}
     >
       {children}
     </DragItem>
