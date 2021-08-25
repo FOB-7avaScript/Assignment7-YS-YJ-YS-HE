@@ -48,7 +48,7 @@ export default function Delete() {
     setDragging((prev) => !prev);
   };
 
-  const handleDragItem = (dragIndex: number | undefined) => {
+  const handleDragItem = (dragIndex: number) => {
     dragItem.current = dragIndex;
   };
 
