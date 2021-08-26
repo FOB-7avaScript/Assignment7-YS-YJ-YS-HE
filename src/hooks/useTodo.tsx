@@ -24,7 +24,7 @@ const initialTodo = (id: number): ITodoItem => ({
 const useTodo = () => {
   const id = getLastTodoId() || 0;
 
-  const [todo, setTodo] = useState(initialTodo(id));
+  const [todo, setTodo] = useState<ITodoItem>(initialTodo(id));
 
   const handleChange = useCallback(
     <T extends string>({
