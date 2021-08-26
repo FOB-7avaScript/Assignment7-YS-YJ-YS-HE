@@ -18,11 +18,7 @@ function SortService() {
   }, []);
 
   const fetchData = () => {
-    fetch('/Data/Data.json')
-      .then((res) => res.json())
-      .then((data) => saveDataToLocalStorage('data', data));
-
-    const data = getDataFromLocalStorage('data');
+    const data = [...todoItems];
     return data;
   };
 
