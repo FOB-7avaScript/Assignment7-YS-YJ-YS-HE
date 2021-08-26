@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
 
@@ -9,7 +9,7 @@ export type Itodo = {
   status: string;
   createdAt: string;
   updatedAt: string;
-  dueDateRange: string[];
+  dueDateRange: Date[];
   importance: number;
 };
 

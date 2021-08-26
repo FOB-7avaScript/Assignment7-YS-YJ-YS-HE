@@ -18,6 +18,7 @@ const Head = styled.header`
   margin-bottom: 40px;
   padding: 30px 40px;
   border-bottom: 1px solid #eee;
+  background: #fff;
   h1 {
     display: flex;
     align-items: center;
