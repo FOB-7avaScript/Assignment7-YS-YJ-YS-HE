@@ -9,6 +9,7 @@ import useRangePickerVisible from 'hooks/useRangePickerVisible';
 
 import dateFormat from 'Utils/Date';
 import DatePicker from './DatePicker';
+import DateRangeText from './DateRangeText';
 
 const TodoForm: FC = () => {
   const { todo, handleInputChange, handleDateRangeChange } = useTodo();
@@ -47,6 +48,7 @@ const TodoForm: FC = () => {
         )}
         <Button type="submit">추가</Button>
       </form>
+      {dueDateRange && <DateRangeText dueDateRange={dueDateRange} />}
     </FormWrap>
   );
 };
