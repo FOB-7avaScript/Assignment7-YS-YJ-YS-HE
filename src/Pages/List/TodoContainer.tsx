@@ -28,16 +28,19 @@ const TodoContainer = () => {
     }
   } = useContext(TodoContext);
 
-  const todoSort = useCallback((selectName: string): Itodo[] => {
-    switch (selectName) {
-      case 'Date':
-        return sortDate(todoItems);
-      case 'Importance':
-        return sortImportance(todoItems);
-      default:
-        return todoItems;
-    }
-  }, []);
+  const todoSort = useCallback(
+    (selectName: string): Itodo[] => {
+      switch (selectName) {
+        case 'Date':
+          return sortDate(todoItems);
+        case 'Importance':
+          return sortImportance(todoItems);
+        default:
+          return todoItems;
+      }
+    },
+    [todoItems]
+  );
 
   useEffect(() => {
     if (sortState === 'basic') {

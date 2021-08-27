@@ -2,6 +2,15 @@ import { useEffect, useState } from 'react';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
 import dateFormat from 'Utils/Date';
+import {
+  DUE_DATE_RANGE,
+  IMPORTANCE,
+  STATUS,
+  STATUS_TYPE,
+  TASK_NAME,
+  TODOS,
+  IMPORTANCE_TYPE_NUMBER
+} from 'Constants';
 
 export type Itodo = {
   id: number;
@@ -24,11 +33,11 @@ const useTodoItems = () => {
   }, []);
 
   useEffect(() => {
-    saveDataToLocalStorage('data', todoItems);
+    saveDataToLocalStorage(TODOS, todoItems);
   }, [todoItems]);
 
   const loadData = () => {
-    const data = getDataFromLocalStorage('data');
+    const data = getDataFromLocalStorage(TODOS);
     initialTodos = data === null ? [] : data;
     setTodoItems(initialTodos);
   };
@@ -46,17 +55,15 @@ const useTodoItems = () => {
       item.id === id ? { ...item, [element]: content } : item
     );
     setTodoItems(editedData);
-    // saveDataToLocalStorage('data', editedData);
   };
 
   const deleteTodo = (id: number) => {
     const leftData = todoItems.filter((item) => item.id !== id);
     setTodoItems(leftData);
-    // saveDataToLocalStorage('data', leftData);
   };
 
   const editTaskName = (id: number, newTaskName: string) => {
-    if (newTaskName.length > 0) todoItemsStateEdit(id, 'taskName', newTaskName);
+    if (newTaskName.length > 0) todoItemsStateEdit(id, TASK_NAME, newTaskName);
   };
 
   const editStatus = (id: number) => {
@@ -65,12 +72,12 @@ const useTodoItems = () => {
     ) as Itodo;
     const currentStatus: string = currentTodo.status;
     const status: { [key: string]: string } = {
-      완료: '시작 안함',
-      '시작 안함': '진행중',
-      진행중: '완료'
+      [FINISHED]: NOT_START,
+      [NOT_START]: ON_GOING,
+      [ON_GOING]: FINISHED
     };
     const updateStatus = status[currentStatus] || '';
-    todoItemsStateEdit(id, 'status', updateStatus);
+    todoItemsStateEdit(id, STATUS, updateStatus);
   };
 
   const editImportance = (id: number) => {
@@ -79,12 +86,12 @@ const useTodoItems = () => {
     ) as Itodo;
     const currentImportance: string = currentTodo.importance;
     const importance: { [key: string]: string } = {
-      '1': '2',
-      '2': '3',
-      '3': '1'
+      [HIGH]: MEDIUM,
+      [MEDIUM]: LOW,
+      [LOW]: HIGH
     };
     const updateImportance = importance[currentImportance] || '';
-    todoItemsStateEdit(id, 'importance', updateImportance);
+    todoItemsStateEdit(id, IMPORTANCE, updateImportance);
   };
 
   const editDueDateRange = (id: number, value: Date[] | null) => {
@@ -93,7 +100,7 @@ const useTodoItems = () => {
         dateFormat({ targetDate: value[0] }),
         dateFormat({ targetDate: value[1] })
       ];
-      todoItemsStateEdit(id, 'dueDateRange', parsedDueDateRange);
+      todoItemsStateEdit(id, DUE_DATE_RANGE, parsedDueDateRange);
     }
   };
 
@@ -110,3 +117,5 @@ const useTodoItems = () => {
 };
 
 export default useTodoItems;
+const { NOT_START, ON_GOING, FINISHED } = STATUS_TYPE;
+const { HIGH, MEDIUM, LOW } = IMPORTANCE_TYPE_NUMBER
