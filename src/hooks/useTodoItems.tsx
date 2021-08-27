@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-
-// import { Itodo } from 'Pages/Delete/Delete';
 import getDataFromLocalStorage from 'Utils/GetDataFromLocalStorage';
 import saveDataToLocalStorage from 'Utils/SaveDataToLocalStorage';
 import dateFormat from 'Utils/Date';
@@ -20,18 +18,17 @@ let initialTodos: Itodo[] = [];
 
 const useTodoItems = () => {
   const [todoItems, setTodoItems] = useState(initialTodos);
-  const data = getDataFromLocalStorage('data');
 
   useEffect(() => {
     loadData();
   }, []);
 
-  // useEffect(() => {
-  //   saveDataToLocalStorage('data', todoItems);
-  // }, [todoItems]);
+  useEffect(() => {
+    saveDataToLocalStorage('data', todoItems);
+  }, [todoItems]);
 
   const loadData = () => {
-    // const data = getDataFromLocalStorage('data');
+    const data = getDataFromLocalStorage('data');
     initialTodos = data === null ? [] : data;
     setTodoItems(initialTodos);
   };
@@ -49,13 +46,13 @@ const useTodoItems = () => {
       item.id === id ? { ...item, [element]: content } : item
     );
     setTodoItems(editedData);
-    saveDataToLocalStorage('data', editedData);
+    // saveDataToLocalStorage('data', editedData);
   };
 
   const deleteTodo = (id: number) => {
     const leftData = todoItems.filter((item) => item.id !== id);
     setTodoItems(leftData);
-    saveDataToLocalStorage('data', leftData);
+    // saveDataToLocalStorage('data', leftData);
   };
 
   const editTaskName = (id: number, newTaskName: string) => {
@@ -63,8 +60,10 @@ const useTodoItems = () => {
   };
 
   const editStatus = (id: number) => {
-    const currentTodo = data.find((item: Itodo) => item.id === id);
-    const currentStatus: string = currentTodo?.status;
+    const currentTodo = todoItems.find(
+      (item: Itodo) => item.id === id
+    ) as Itodo;
+    const currentStatus: string = currentTodo.status;
     const status: { [key: string]: string } = {
       완료: '시작 안함',
       '시작 안함': '진행중',
@@ -75,8 +74,10 @@ const useTodoItems = () => {
   };
 
   const editImportance = (id: number) => {
-    const currentTodo = data.find((item: Itodo) => item.id === id);
-    const currentImportance: string = currentTodo?.importance;
+    const currentTodo = todoItems.find(
+      (item: Itodo) => item.id === id
+    ) as Itodo;
+    const currentImportance: string = currentTodo.importance;
     const importance: { [key: string]: string } = {
       '1': '2',
       '2': '3',

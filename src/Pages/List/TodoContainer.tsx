@@ -1,21 +1,12 @@
 /* eslint-disable jsx-a11y/no-onchange */
 import styled from '@emotion/styled';
 import SortService from 'Components/Sort/SortService';
-import React, { useState, useEffect, useCallback } from 'react';
-import useTodoItems, { Itodo } from 'hooks/useTodoItems';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
+import TodoContext from 'store/Todo';
+import { Itodo } from 'hooks/useTodoItems';
 import TodoList from './TodoList';
 
 const TodoContainer = () => {
-  const {
-    todoItems,
-    deleteTodo,
-    editTaskName,
-    editStatus,
-    editImportance,
-    editDueDateRange,
-    handleTodoItems
-  } = useTodoItems();
-
   const [sortState, setSortState] = useState<string>('basic');
   const [sortedItems, setSortedItems] = useState<Itodo[]>([]);
   const { sortDate, sortImportance } = SortService();
@@ -24,6 +15,18 @@ const TodoContainer = () => {
   const sortChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setSortState(e.target.value);
   };
+
+  const {
+    state: { todoItems },
+    actions: {
+      deleteTodo,
+      editTaskName,
+      editStatus,
+      editImportance,
+      editDueDateRange,
+      handleTodoItems
+    }
+  } = useContext(TodoContext);
 
   const todoSort = useCallback((selectName: string): Itodo[] => {
     switch (selectName) {
